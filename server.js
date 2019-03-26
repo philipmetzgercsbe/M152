@@ -74,6 +74,3 @@ app.post('/', upload.single(''), function (req, res) {
 app.get('/', function (req, res) {
     res.sendFile(__dirname + "index.html");
 });
-app.listen(80, function () {
-    console.log("Server listens on port " + 80);
-});
