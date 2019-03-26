@@ -1,6 +1,15 @@
 import * as express from "express";
 import * as gm from "gm";
 import * as multer from "multer";
+import * as mime from "mime";
+
+const typemap = [
+    "jpg",
+    "png",
+    "gif"
+];
+
+
 
 const app = express();
 const storage = multer.diskStorage({
@@ -49,6 +58,7 @@ app.post('/upload', upload.single('img'), function (req, res) {
 });
 
 app.post('/', upload.single(''), function (req, res) {
+    if(req.file.mimetype != typemap)
     gm(req.file.filename)
         .write('./img/' + req.file.filename, function (err) {
             if (!err) console.log('done');
