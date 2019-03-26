@@ -13,15 +13,14 @@ app.get('/home', function (req: express.Request, res: express.Response) {
 });
 
 
-app.post('/',multer.upload.single('img'), function (req, res) {
-
+app.post('/upload',multer.upload.single('img'), function (req, res) {
 gm('img')
 .resize(720)
 .write('./changed/small/small_img', function (err) {
   if (!err) console.log('done');
 });
  
-gm('./img/schmitz_v3.png')
+gm('img')
 .resize(1280)
 .write('./changed/medium/medium_img', function (err) {
   if (!err) console.log('done');
@@ -36,7 +35,7 @@ gm('img')
 });
 
 app.get('/', function (req, res) {
-    res.send("index.html");
+    res.sendFile(__dirname +"index.html");
 });
 
 app.listen(80, function () {
