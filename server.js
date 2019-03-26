@@ -7,10 +7,16 @@ var app = express();
 app.use('/static/small', express.static('changed/small'));
 app.use('/static/medium', express.static('changed/medium'));
 app.use('/static/large', express.static('changed/large'));
+app.use('/static/orig', express.static('img/'));
 app.get('/home', function (req, res) {
     res.sendFile(__dirname + "/index.html");
 });
-app.post('/', multer.upload.single('img'), function (req, res) {
+app.post('/upload', multer.single('img'), function (req, res) {
+    gm('img')
+        .write('./img/' + 'img', function (err) {
+        if (!err)
+            console.log('done');
+    });
     gm('img')
         .resize(720)
         .write('./changed/small/small_img', function (err) {
