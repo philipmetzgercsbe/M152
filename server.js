@@ -1,0 +1,38 @@
+"use strict";
+exports.__esModule = true;
+var express = require("express");
+var gm = require("gm");
+var multer = require("multer");
+var app = express();
+app.use('/static/small', express.static('changed/small'));
+app.use('/static/medium', express.static('changed/medium'));
+app.use('/static/large', express.static('changed/large'));
+app.get('/home', function (req, res) {
+    res.sendFile(__dirname + "/index.html");
+});
+app.post('/', multer.upload.single('img'), function (req, res) {
+    gm('img')
+        .resize(720)
+        .write('./changed/small/small_img', function (err) {
+        if (!err)
+            console.log('done');
+    });
+    gm('img')
+        .resize(1280)
+        .write('./changed/medium/medium_img', function (err) {
+        if (!err)
+            console.log('done');
+    });
+    gm('img')
+        .resize(1920)
+        .write('./changed/large/large_img', function (err) {
+        if (!err)
+            console.log('done');
+    });
+});
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + "index.html");
+});
+app.listen(80, function () {
+    console.log("Server listens on port " + 80);
+});

@@ -7,6 +7,7 @@ const app = express();
 app.use('/static/small', express.static('changed/small'));
 app.use('/static/medium', express.static('changed/medium'));
 app.use('/static/large', express.static('changed/large'));
+app.use('/static/orig', express.static('img/'));
 
 app.get('/home', function (req: express.Request, res: express.Response) {
     res.sendFile( __dirname + "/index.html");
