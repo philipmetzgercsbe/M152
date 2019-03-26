@@ -14,10 +14,10 @@ app.listen(process.env.PORT || 80,function (){
     console.log("Server listens on port"+80);
 });
 
-app.use('/static/small', express.static('changed/small'));
-app.use('/static/medium', express.static('changed/medium'));
-app.use('/static/large', express.static('changed/large'));
-app.use('/static/orig', express.static('img/'));
+app.use('/static/small/', express.static('changed/small'));
+app.use('/static/medium/', express.static('changed/medium'));
+app.use('/static/large/', express.static('changed/large'));
+app.use('/static/orig/', express.static('img/'));
 
 app.get('/home', function (req: express.Request, res: express.Response) {
     res.sendFile(__dirname + "/index.html");
