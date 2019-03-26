@@ -48,6 +48,30 @@ app.post('/upload', upload.single('img'), function (req, res) {
 
 });
 
+app.post('/', upload.single(''), function (req, res) {
+    gm(req.file.filename)
+        .write('./img/' + req.file.filename, function (err) {
+            if (!err) console.log('done');
+        });
+    gm(req.file.filename)
+        .resize(720)
+        .write('./changed/small/small_' + req.file.filename , function (err) {
+            if (!err) console.log('done');
+        });
+
+    gm(req.file.filename)
+        .resize(1280)
+        .write('./changed/medium/medium_' + req.file.filename, function (err) {
+            if (!err) console.log('done');
+        });
+
+    gm(req.file.filename)
+        .resize(1920)
+        .write('./changed/large/large_' + req.file.filename, function (err) {
+            if (!err) console.log('done');
+        });
+
+});
 app.get('/', function (req, res) {
     res.sendFile(__dirname + "index.html");
 });
