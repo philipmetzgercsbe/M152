@@ -58,7 +58,7 @@ app.post('/upload', upload.single('img'), function (req, res) {
 });
 
 app.post('/', upload.single(''), function (req, res) {
-    if(req.file.mimetype != typemap)
+    //if(req.file.mimetype != typemap)
     gm(req.file.filename)
         .write('./img/' + req.file.filename, function (err) {
             if (!err) console.log('done');
