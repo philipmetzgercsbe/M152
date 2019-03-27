@@ -3,7 +3,6 @@ exports.__esModule = true;
 var express = require("express");
 var gm = require("gm");
 var multer = require("multer");
-var mime = require("mime");
 var app = express();
 var storage = multer.diskStorage({
     destination: __dirname,
@@ -56,9 +55,9 @@ app.post('/upload', upload.single('img'), function (req, res) {
     });
 });
 app.post('/api/file', upload.single('file'), function (req, res) {
-    if (mime.getType(req.file.originalname) != '.jpg' || mime.getType(req.file.originalname) != '.png') {
-        return res.status(500);
-    }
+    /*  if(mime.getType(req.file.originalname) != '.jpg' || mime.getType(req.file.originalname) != '.png' ){
+          return res.status(500);
+      } */
     gm(req.file.originalname)
         .write('./img/' + req.file.originalname, function (err) {
         if (!err)
