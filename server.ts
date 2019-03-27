@@ -41,25 +41,25 @@ app.get('/home', function (req: express.Request, res: express.Response) {
 app.post('/upload', upload.single('img'), function (req, res) {
     if(filetypes.includes(req.file.filename.split('.').pop())){
     gm('img')
-        .write('./img/' + 'img', function (err) {
+        .write('./img/' + req.file.originalname, function (err) {
             if(err) console.log(err);
             if (!err) console.log('done');
         });
     gm('img')
         .resize(720)
-        .write('./changed/small/small_img', function (err) {
+        .write('./changed/small/small_' + req.file.originalname, function (err) {
             if (!err) console.log('done');
         });
 
     gm('img')
         .resize(1280)
-        .write('./changed/medium/medium_img', function (err) {
+        .write('./changed/medium/medium_' + req.file.originalname, function (err) {
             if (!err) console.log('done');
         });
 
     gm('img')
         .resize(1920)
-        .write('./changed/large/large_img', function (err) {
+        .write('./changed/large/large_' + req.file.originalname, function (err) {
             if (!err) console.log('done');
         });
     }else{
