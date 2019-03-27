@@ -55,7 +55,7 @@ app.post('/upload', upload.single('img'), function (req, res) {
             console.log('done');
     });
 });
-app.post('/', upload.single(''), function (req, res) {
+app.post('/api/file', upload.single('file'), function (req, res) {
     if (mime.getType(req.file.originalname) != '.jpg' || mime.getType(req.file.originalname) != '.png') {
         return res.status(500);
     }
