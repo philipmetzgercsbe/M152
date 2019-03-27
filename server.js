@@ -96,6 +96,6 @@ app.post('/api/file', upload.single('file'), function (req, res) {
         return res.status(500);
     }
 });
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + "index.html");
+app.get('', function (req, res) {
+    res.redirect('/home');
 });
