@@ -15,6 +15,12 @@ var upload = multer({ storage: storage });
 app.listen(process.env.PORT || 80, function () {
     console.log("Server listens on port" + 80);
 });
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    res.header("Access-Control-Allow-Methods", "PUT, POST, GET, OPTIONS, DELETE");
+    next();
+});
 app.use('/files/', express.static('changed/small'));
 app.use('/files/', express.static('changed/medium'));
 app.use('/files/', express.static('changed/large'));
