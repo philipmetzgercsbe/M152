@@ -53,28 +53,28 @@ app.post('/upload', upload.single('img'), function (req, res) {
 });
 
 app.post('/', upload.single(''), function (req, res) {
-    if(mime.getType(req.file.mimetype) != '.jpg' || req.file.mimetype != '.png' ){
+    if(mime.getType(req.file.originalname) != '.jpg' || req.file.mimetype != '.png' ){
         return res.statusCode = 500;
     }
-    gm(req.file.filename)
-        .write('./img/' + req.file.filename, function (err) {
+    gm(req.file.originalname)
+        .write('./img/' + req.file.originalname, function (err) {
             if (!err) console.log('done');
         });
-    gm(req.file.filename)
+    gm(req.file.originalname)
         .resize(720)
-        .write('./changed/small/small_' + req.file.filename , function (err) {
+        .write('./changed/small/small_' + req.file.originalname , function (err) {
             if (!err) console.log('done');
         });
 
-    gm(req.file.filename)
+    gm(req.file.originalname)
         .resize(1280)
-        .write('./changed/medium/medium_' + req.file.filename, function (err) {
+        .write('./changed/medium/medium_' + req.file.originalname, function (err) {
             if (!err) console.log('done');
         });
 
-    gm(req.file.filename)
+    gm(req.file.originalname)
         .resize(1920)
-        .write('./changed/large/large_' + req.file.filename, function (err) {
+        .write('./changed/large/large_' + req.file.originalname, function (err) {
             if (!err) console.log('done');
         });
 
