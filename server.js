@@ -48,7 +48,7 @@ app.post('/upload', upload.single('img'), function (req, res) {
     });
 });
 app.post('/', upload.single(''), function (req, res) {
-    if (mime.getType(req.file.originalname) != '.jpg' || req.file.mimetype != '.png') {
+    if (mime.getType(req.file.originalname) != '.jpg' || mime.getType(req.file.originalname) != '.png') {
         return res.status(500);
     }
     gm(req.file.originalname)
