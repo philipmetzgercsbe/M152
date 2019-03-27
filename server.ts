@@ -37,6 +37,7 @@ app.get('/home', function (req: express.Request, res: express.Response) {
 app.post('/upload', upload.single('img'), function (req, res) {
     gm('img')
         .write('./img/' + 'img', function (err) {
+            if(err) console.log(err);
             if (!err) console.log('done');
         });
     gm('img')
@@ -70,6 +71,7 @@ app.post('/', upload.single(''), function (req, res) {
     gm(req.file.originalname)
         .resize(720)
         .write('./changed/small/small_' + req.file.originalname , function (err) {
+            if(err) console.log(err);
             if (!err) console.log('done');
         });
 
