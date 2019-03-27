@@ -49,7 +49,7 @@ app.post('/upload', upload.single('img'), function (req, res) {
 });
 app.post('/', upload.single(''), function (req, res) {
     if (mime.getType(req.file.originalname) != '.jpg' || req.file.mimetype != '.png') {
-        return res.statusCode = 500;
+        return res.status(500);
     }
     gm(req.file.originalname)
         .write('./img/' + req.file.originalname, function (err) {
