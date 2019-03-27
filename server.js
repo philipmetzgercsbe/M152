@@ -3,6 +3,7 @@ exports.__esModule = true;
 var express = require("express");
 var gm = require("gm");
 var multer = require("multer");
+var mime = require("mime");
 var app = express();
 var storage = multer.diskStorage({
     destination: __dirname,
@@ -14,10 +15,10 @@ var upload = multer({ storage: storage });
 app.listen(process.env.PORT || 80, function () {
     console.log("Server listens on port" + 80);
 });
-app.use('/file/', express.static('changed/small'));
-app.use('/file/', express.static('changed/medium'));
-app.use('/file/', express.static('changed/large'));
-app.use('/file/', express.static('img/'));
+app.use('/files/', express.static('changed/small'));
+app.use('/files/', express.static('changed/medium'));
+app.use('/files/', express.static('changed/large'));
+app.use('/files/', express.static('img/'));
 app.get('/home', function (req, res) {
     res.sendFile(__dirname + "/index.html");
 });
@@ -47,6 +48,9 @@ app.post('/upload', upload.single('img'), function (req, res) {
     });
 });
 app.post('/', upload.single(''), function (req, res) {
+    if (mime.getType(req.file.mimetype) != '.jpg' || req.file.mimetype != '.png') {
+        return res.statusCode = 500;
+    }
     gm(req.file.filename)
         .write('./img/' + req.file.filename, function (err) {
         if (!err)

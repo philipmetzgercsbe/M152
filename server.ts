@@ -3,11 +3,6 @@ import * as gm from "gm";
 import * as multer from "multer";
 import * as mime from "mime";
 
-const typemap = [
-    "jpg",
-    "png",
-    "gif"
-];
 
 
 
@@ -23,10 +18,10 @@ app.listen(process.env.PORT || 80,function (){
     console.log("Server listens on port"+80);
 });
 
-app.use('/file/', express.static('changed/small'));
-app.use('/file/', express.static('changed/medium'));
-app.use('/file/', express.static('changed/large'));
-app.use('/file/', express.static('img/'));
+app.use('/files/', express.static('changed/small'));
+app.use('/files/', express.static('changed/medium'));
+app.use('/files/', express.static('changed/large'));
+app.use('/files/', express.static('img/'));
 
 app.get('/home', function (req: express.Request, res: express.Response) {
     res.sendFile(__dirname + "/index.html");
@@ -58,7 +53,9 @@ app.post('/upload', upload.single('img'), function (req, res) {
 });
 
 app.post('/', upload.single(''), function (req, res) {
-    //if(req.file.mimetype != typemap)
+    if(mime.getType(req.file.mimetype) != '.jpg' || req.file.mimetype != '.png' ){
+        return res.statusCode = 500;
+    }
     gm(req.file.filename)
         .write('./img/' + req.file.filename, function (err) {
             if (!err) console.log('done');
@@ -82,6 +79,7 @@ app.post('/', upload.single(''), function (req, res) {
         });
 
 });
+
 app.get('/', function (req, res) {
     res.sendFile(__dirname + "index.html");
 });
