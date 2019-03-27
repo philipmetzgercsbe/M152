@@ -99,6 +99,6 @@ app.post('/api/file', upload.single('file'), function (req, res) {
 });
 
 app.get('', function (req, res) {
-    res.sendFile(__dirname + "index.html");
+    res.redirect('/home');
 });
 
