@@ -4,7 +4,11 @@ import * as multer from "multer";
 import * as mime from "mime";
 
 
-
+const filetypes = [
+    '.jpg',
+    '.png',
+    '.svg'
+]
 
 const app = express();
 const storage = multer.diskStorage({
@@ -35,6 +39,7 @@ app.get('/home', function (req: express.Request, res: express.Response) {
 });
 
 app.post('/upload', upload.single('img'), function (req, res) {
+    if(filetypes.includes(req.file.filename.split('.').pop())){
     gm('img')
         .write('./img/' + 'img', function (err) {
             if(err) console.log(err);
@@ -57,13 +62,14 @@ app.post('/upload', upload.single('img'), function (req, res) {
         .write('./changed/large/large_img', function (err) {
             if (!err) console.log('done');
         });
+    }else{
+        return res.redirect('/home');
+    }
 
 });
 
 app.post('/api/file', upload.single('file'), function (req, res) {
-  /*  if(mime.getType(req.file.originalname) != '.jpg' || mime.getType(req.file.originalname) != '.png' ){
-        return res.status(500);
-    } */
+   if(filetypes.includes(req.file.filename.split('.').pop())){
     gm(req.file.originalname)
         .write('./img/' + req.file.originalname, function (err) {
             if (!err) console.log('done');
@@ -86,6 +92,9 @@ app.post('/api/file', upload.single('file'), function (req, res) {
         .write('./changed/large/large_' + req.file.originalname, function (err) {
             if (!err) console.log('done');
         });
+    }else{
+        return res.status(500);
+    }
 
 });
 

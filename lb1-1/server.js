@@ -3,6 +3,11 @@ exports.__esModule = true;
 var express = require("express");
 var gm = require("gm");
 var multer = require("multer");
+var filetypes = [
+    '.jpg',
+    '.png',
+    '.svg'
+];
 var app = express();
 var storage = multer.diskStorage({
     destination: __dirname,
@@ -28,61 +33,68 @@ app.get('/home', function (req, res) {
     res.sendFile(__dirname + "/index.html");
 });
 app.post('/upload', upload.single('img'), function (req, res) {
-    gm('img')
-        .write('./img/' + 'img', function (err) {
-        if (err)
-            console.log(err);
-        if (!err)
-            console.log('done');
-    });
-    gm('img')
-        .resize(720)
-        .write('./changed/small/small_img', function (err) {
-        if (!err)
-            console.log('done');
-    });
-    gm('img')
-        .resize(1280)
-        .write('./changed/medium/medium_img', function (err) {
-        if (!err)
-            console.log('done');
-    });
-    gm('img')
-        .resize(1920)
-        .write('./changed/large/large_img', function (err) {
-        if (!err)
-            console.log('done');
-    });
+    if (filetypes.includes(req.file.filename.split('.').pop())) {
+        gm('img')
+            .write('./img/' + 'img', function (err) {
+            if (err)
+                console.log(err);
+            if (!err)
+                console.log('done');
+        });
+        gm('img')
+            .resize(720)
+            .write('./changed/small/small_img', function (err) {
+            if (!err)
+                console.log('done');
+        });
+        gm('img')
+            .resize(1280)
+            .write('./changed/medium/medium_img', function (err) {
+            if (!err)
+                console.log('done');
+        });
+        gm('img')
+            .resize(1920)
+            .write('./changed/large/large_img', function (err) {
+            if (!err)
+                console.log('done');
+        });
+    }
+    else {
+        return res.redirect('/home');
+    }
 });
 app.post('/api/file', upload.single('file'), function (req, res) {
-    /*  if(mime.getType(req.file.originalname) != '.jpg' || mime.getType(req.file.originalname) != '.png' ){
-          return res.status(500);
-      } */
-    gm(req.file.originalname)
-        .write('./img/' + req.file.originalname, function (err) {
-        if (!err)
-            console.log('done');
-    });
-    gm(req.file.originalname)
-        .resize(720)
-        .write('./changed/small/small_' + req.file.originalname, function (err) {
-        if (err)
-            console.log(err);
-        if (!err)
-            console.log('done');
-    });
-    gm(req.file.originalname)
-        .resize(1280)
-        .write('./changed/medium/medium_' + req.file.originalname, function (err) {
-        if (!err)
-            console.log('done');
-    });
-    gm(req.file.originalname)
-        .resize(1920)
-        .write('./changed/large/large_' + req.file.originalname, function (err) {
-        if (!err)
-            console.log('done');
-    });
+    if (filetypes.includes(req.file.filename.split('.').pop())) {
+        gm(req.file.originalname)
+            .write('./img/' + req.file.originalname, function (err) {
+            if (!err)
+                console.log('done');
+        });
+        gm(req.file.originalname)
+            .resize(720)
+            .write('./changed/small/small_' + req.file.originalname, function (err) {
+            if (err)
+                console.log(err);
+            if (!err)
+                console.log('done');
+        });
+        gm(req.file.originalname)
+            .resize(1280)
+            .write('./changed/medium/medium_' + req.file.originalname, function (err) {
+            if (!err)
+                console.log('done');
+        });
+        gm(req.file.originalname)
+            .resize(1920)
+            .write('./changed/large/large_' + req.file.originalname, function (err) {
+            if (!err)
+                console.log('done');
+        });
+    }
+    else {
+        return res.status(500);
+    }
 });
 app.get('/', function (req, res) {
     res.sendFile(__dirname + "index.html");
