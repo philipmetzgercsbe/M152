@@ -5,15 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Image Transform M152</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/main.css">
     <script src="main.js"></script>
 </head>
 <body>
 
-    <img src="/img/schmitz_v3.png" alt="Schmitz Workshop">
+    <img src="/assets/schmitz_v5.png" alt="Schmitz Workshop">
     <h1>Upload a File</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="img" />
+    <form action="/api/file" method="post" enctype="multipart/form-data">
+        <input type="file" name="file"  accept=".png,.jpg,.gif"/>
+        <button type="submit">Send</button>
+      </form>
+
+      <h1>Upload multiple files</h1>
+      <form action="/api/files" method="post" enctype="multipart/form-data">
+        <input type="file" name="images" accept=".png,.jpg,.gif" />
         <button type="submit">Send</button>
       </form>
    
