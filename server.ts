@@ -2,7 +2,9 @@ import * as express from "express";
 import * as gm from "gm";
 import * as multer from "multer";
 import * as mime from "mime";
-
+import * as ejs from "ejs";
+import * as fs from "fs";
+import * as path from "path";
 
 const filetypes = [
     'jpg',
@@ -66,6 +68,10 @@ app.get('*', function (req, res) {
     res.redirect('/home');
 });
 
+app.get('/gallery/images' ,function(req,res){
+    res.sendFile('./gallery_images.ejs');
+});
+
 
 
 function resizeImage(file: string){
@@ -93,3 +99,10 @@ function resizeImage(file: string){
         });
     
 }
+function readDirectory(path: string){
+    fs.readdirSync(path);
+
+}
+ejs.renderFile('./gallery_images.ejs',{
+    data: readDirectory('./files/')
+})

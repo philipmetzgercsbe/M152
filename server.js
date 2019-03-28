@@ -3,6 +3,8 @@ exports.__esModule = true;
 var express = require("express");
 var gm = require("gm");
 var multer = require("multer");
+var ejs = require("ejs");
+var fs = require("fs");
 var filetypes = [
     'jpg',
     'png',
@@ -56,6 +58,9 @@ app.post('/api/file', upload.single('file'), function (req, res) {
 app.get('*', function (req, res) {
     res.redirect('/home');
 });
+app.get('/gallery/images', function (req, res) {
+    res.sendFile('./gallery_images.ejs');
+});
 function resizeImage(file) {
     gm('./img/' + file)
         .write('./img/orig_' + file, function (err) {
@@ -83,3 +88,9 @@ function resizeImage(file) {
             console.log('done');
     });
 }
+function readDirectory(path) {
+    fs.readdirSync(path);
+}
+ejs.renderFile('./gallery_images.ejs', {
+    data: readDirectory('./files/')
+});

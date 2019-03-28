@@ -13,13 +13,13 @@
     <img src="/assets/schmitz_v5.png" alt="Schmitz Workshop">
     <h1>Upload a File</h1>
     <form action="/api/file" method="post" enctype="multipart/form-data">
-        <input type="file" name="file"  accept=".png,.jpg,.gif"/>
+        <input type="file" name="file"  accept=".png,.jpg,.svg"/>
         <button type="submit">Send</button>
       </form>
 
       <h1>Upload multiple files</h1>
       <form action="/api/files" method="post" enctype="multipart/form-data">
-        <input type="file" name="files" accept=".png,.jpg,.gif" multiple />
+        <input type="file" name="files" accept=".png,.jpg,.svg" multiple />
         <button type="submit">Send</button>
       </form>
    
