@@ -34,18 +34,18 @@ app.get('/home', function (req, res) {
     res.sendFile(__dirname + "/index.html");
 });
 app.post('/api/files', upload.array('files'), function (req, res) {
-    for (var file in req.files) {
-        if (filetypes.includes(file.split('.').pop())) {
-            resizeImage(file);
+    for (var i = 0; i < req.files.length; i++) {
+        if (filetypes.includes(req.files[i].originalname.split('.').pop())) {
+            resizeImage(req.files[i].originalname);
             res.sendStatus(200);
         }
         else {
-            return res.sendStatus(500);
+            return res.status(500);
         }
     }
 });
 app.post('/api/file', upload.single('file'), function (req, res) {
-    if (filetypes.includes(req.file.filename.split('.').pop())) {
+    if (filetypes.includes('./img/' + req.file.filename.split('.').pop())) {
         resizeImage(req.file.originalname);
         res.sendStatus(200);
     }
