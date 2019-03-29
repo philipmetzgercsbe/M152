@@ -9,12 +9,13 @@
     <script src="main.js"></script>
 </head>
 <body>
-
+    <a href="/home">Home</a>
+    <a href="/gallery/images">Image Gallery</a><br>
     <img class = "fromjstojquery" src="/assets/schmitz_v5.png" alt="Schmitz Workshop">
     <h1>Upload a File</h1>
     <form action="/api/file" method="post" enctype="multipart/form-data">
         <input type="file" name="file"  accept=".png,.jpg,.svg"/>
-        <button type="submit">Send</button>
+        <button  type="submit">Send</button>
       </form>
 
       <h1>Upload multiple files</h1>
@@ -25,4 +26,12 @@
    
     
 </body>
+<script>
+  function redirect(){
+    setTimeout(() => {
+      
+    }, 1000);
+    widnow.location.replace('/home');
+  }
+</script>
 </html>

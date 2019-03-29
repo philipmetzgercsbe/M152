@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html>
+<head>
+ <title>Image Gallery</title>
 <link rel="stylesheet" type="text/css" media="screen" href="assets/main.css">
+</head>
 <body>
+  <a href = "/home">Go Home</a>
   <p>All Images</p>
+  <div id='flexwrapper' class="flexwrapper">
     <% for (let image of images) { %>
-        <div><img class="ToFlex" src="/files/<%= image %>"></div>
+       <img class="ToFlex" src="/files/<%= image %>">
       <% } %>
 
       <% for (let image of data) { %>
-        <div><img class="ToFlex" src="/files/<%= image %>"></div>
+       <img class="ToFlex" src="/files/<%= image %>">
       <% } %>
+  </div>
       
 </body>
 </html>
