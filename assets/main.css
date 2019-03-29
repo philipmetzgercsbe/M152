@@ -14,10 +14,8 @@ h1 {
 
 @media screen and (max-width: 500px){
 body{
-    background: url(/files/img/schmitz_v3.png);
+    background: url(/files/schmitz_v3.png),grey;
     background-size: contain;
-    background-color: gray;
-    background-blend-mode: multiply;
     font-size: 5vh;
 }}
 
