@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
+<link rel="stylesheet" type="text/css" media="screen" href="assets/main.css">
 <body>
   <p>All Images</p>
     <% for (let image of images) { %>
-        <div><img class="2flex" src="/files/<%= image %>"></div>
+        <div><img class="ToFlex" src="/files/<%= image %>"></div>
       <% } %>
 
       <% for (let image of data) { %>
-        <div><img class="2flex" src="/files/<%= image %>"></div>
+        <div><img class="ToFlex" src="/files/<%= image %>"></div>
       <% } %>
       
 </body>
