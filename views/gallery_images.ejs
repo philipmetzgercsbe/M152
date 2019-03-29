@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html>
 <body>
+  <p>All Images</p>
     <% for (let image of images) { %>
-        <img src=`<%= image %>`>
+        <div><img class="2flex" src="/files/<%= image %>"></div>
       <% } %>
+
+      <% for (let image of data) { %>
+        <div><img class="2flex" src="/files/<%= image %>"></div>
+      <% } %>
+      
 </body>
 </html>
 

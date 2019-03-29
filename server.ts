@@ -14,7 +14,7 @@ const filetypes = [
 
 const app = express();
 const storage = multer.diskStorage({
-    destination: './img',
+    destination: './files/img',
     filename: function (req,file,cb){
         cb(null, file.originalname);
     }
@@ -24,6 +24,8 @@ app.listen(process.env.PORT || 80,function (){
     console.log("Server listens on port"+80);
 });
 
+app.set('view engine', 'ejs');
+
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", 'Content-Type, Authorization, Content-Length, X-Requested-With');
@@ -31,11 +33,10 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.use('/files/', express.static('changed/small'));
-app.use('/files/', express.static('changed/medium'));
-app.use('/files/', express.static('changed/large'));
-app.use('/files/', express.static('img/'));
+app.use('/files/', express.static('./files/changed/'));
+app.use('/files/', express.static('./files/img/'));
 app.use('/assets/', express.static('assets/'));
+
 
 app.get('/home', function (req: express.Request, res: express.Response) {
     res.sendFile(__dirname + "/index.html");
@@ -55,7 +56,7 @@ app.post('/api/files', upload.array('files'), function (req, res) {
 });
 
 app.post('/api/file', upload.single('file'), function (req, res) {
-   if(filetypes.includes('./img/' +req.file.filename.split('.').pop())){
+   if(filetypes.includes('./files/img' +req.file.filename.split('.').pop())){
     resizeImage(req.file.originalname);
     res.sendStatus(200);
     }else{
@@ -64,45 +65,39 @@ app.post('/api/file', upload.single('file'), function (req, res) {
 
 });
 
+
+
+app.get('/gallery/images' ,function(req,res){
+    res.render('gallery_images',{images: fs.readdirSync('./files/img/'),data: fs.readdirSync('./files/changed/')});
+});
+
 app.get('*', function (req, res) {
     res.redirect('/home');
 });
 
-app.get('/gallery/images' ,function(req,res){
-    res.sendFile('./gallery_images.ejs');
-});
-
-
-
 function resizeImage(file: string){
-    gm('./img/' + file)
-        .write('./img/orig_' + file, function (err) {
+    gm('./files/img/' + file)
+        .write('./files/img/orig_' + file, function (err) {
             if (!err) console.log('done');
         });
-    gm('./img/' +file)
+    gm('./files/img/' +file)
         .resize(720)
-        .write('./changed/small/small_' + file , function (err) {
+        .write('./files/changed/small_' + file , function (err) {
             if(err) console.log(err);
             if (!err) console.log('done');
         });
 
-    gm('./img/' +file)
+    gm('./files/img/' +file)
         .resize(1280)
-        .write('./changed/medium/medium_' + file , function (err) {
+        .write('./files/changed/medium_' + file , function (err) {
             if (!err) console.log('done');
         });
 
-    gm('./img/' +file)
+    gm('./files/img/' +file)
         .resize(1920)
-        .write('./changed/large/large_' + file , function (err) {
+        .write('./files/changed/large_' + file , function (err) {
             if (!err) console.log('done');
         });
     
 }
-function readDirectory(path: string){
-    fs.readdirSync(path);
 
-}
-ejs.renderFile('./gallery_images.ejs',{
-    data: readDirectory('./files/')
-})
