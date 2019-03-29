@@ -53,7 +53,7 @@ app.post('/api/file', upload.single('file'), function (req, res) {
         return res.status(500);
     }
 });
-app.get('/gallery/images', function (req, res) {
+app.get('/gallery/image', function (req, res) {
     res.render('gallery_images', { images: fs.readdirSync('./files/img/'), data: fs.readdirSync('./files/changed/') });
 });
 app.get('*', function (req, res) {
