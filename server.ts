@@ -18,7 +18,8 @@ const videotypes = [
     'mp4',
     'wav',
     'wmv',
-    'mov'
+    'mov',
+    'flv'
 
 ]
 
@@ -70,7 +71,7 @@ app.post('/api/files', imageupload.array('files'), function (req, res) {
         resizeImage(req.files[i].originalname);       
         res.sendStatus(200);
         }else{
-            return res.status(500)
+            return res.sendStatus(500)
         }
     }
    
@@ -82,7 +83,7 @@ app.post('/api/file', imageupload.single('file'), function (req, res) {
     resizeImage(req.file.originalname);
     res.sendStatus(200);
     }else{
-        return res.status(500);
+        return res.sendStatus(500);
     }
 
 });
@@ -92,21 +93,21 @@ app.post('/api/videos', videoupload.array('videos'), function (req, res) {
     for (let i = 0; i<req.files.length; i++) {
         if(videotypes.includes(req.files[i].originalname.split('.').pop())){
         videoNames.push(req.files[i].originalname);
-        videoNames.forEach(function(videoName){
-            mergedVideo = mergedVideo.addInput(videoName);
-        });
-        mergedVideo.mergeToFile('./files/videos/changed/'  + req.body.videoname + '.mp4', )
-        .on('error', function(err) {
-            console.log('Error ' + err.message);
-        })
-        .on('end', function() {
-            console.log('Finished!');
-        });
         res.sendStatus(200);
         }else{
             return res.sendStatus(500)
         }
     }
+    videoNames.forEach(function(videoName){
+        mergedVideo = mergedVideo.addInput(videoName);
+    });
+    mergedVideo.mergeToFile('./files/videos/changed/'  + req.body.videoname + '.mp4', )
+    .on('error', function(err) {
+        console.log('Error ' + err.message);
+    })
+    .on('end', function() {
+        console.log('Finished!');
+    });
 });
 
 app.get('/play_video/',function(req, res){

@@ -1,21 +1,22 @@
 <% if(video == null ){%>
+<a href="/home">Go Home</a>
 <p>No such video</p>
 <% }else{%>
-<figure id="videoContainer">
-   <video id="video" controls preload="metadata" poster="img/poster.jpg">
-      <source src="video/tears-of-steel-battle-clip-medium.mp4" type="video/mp4">
-      <source src="video/tears-of-steel-battle-clip-medium.webm" type="video/webm">
-      <source src="video/tears-of-steel-battle-clip-medium.ogg" type="video/ogg">
-      <!-- Flash fallback -->
-      <object type="application/x-shockwave-flash" data="flash-player.swf?videoUrl=video/tears-of-steel-battle-clip-medium.mp4" width="1024" height="576">
-         <param name="movie" value="flash-player.swf?videoUrl=video/tears-of-steel-battle-clip-medium.mp4" />
-         <param name="allowfullscreen" value="true" />
-         <param name="wmode" value="transparent" />
-         <param name="flashvars" value="controlbar=over&amp;image=img/poster.jpg&amp;file=flash-player.swf?videoUrl=video/tears-of-steel-battle-clip-medium.mp4" />
-         <img alt="Tears of Steel poster image" src="img/poster.jpg" width="1024" height="428" title="No video playback possible, please download the video from the link below" />
-      </object>
-      <!-- Offer download -->
-   </video>
-   <figcaption>&copy; Blender Foundation | <a href="http://mango.blender.org">mango.blender.org</a></figcaption>
-</figure>
+<video src="<% video %>" >
+Your browser does not support the video tag.
+</video>
+<ul id="video-controls" class="controls">
+   <li><button id="playpause" type="button">Play/Pause</button></li>
+   <li><button id="stop" type="button">Stop</button></li>
+   <li class="progress">
+      <progress id="progress" value="0" min="0">
+         <span id="progress-bar"></span>
+      </progress>
+   </li>
+   <li><button id="mute" type="button">Mute/Unmute</button></li>
+   <li><button id="volinc" type="button">Vol+</button></li>
+   <li><button id="voldec" type="button">Vol-</button></li>
+   <li><button id="fs" type="button">Fullscreen</button></li>
+</ul>
+<script href="../assets/player.js"></script>
 <%}%>
