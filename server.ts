@@ -5,11 +5,21 @@ import * as mime from "mime";
 import * as ejs from "ejs";
 import * as fs from "fs";
 import * as path from "path";
+import * as fluentmpeg from "fluent-ffmpeg";
+import * as fluent from "ffmpeg";
 
 const filetypes = [
     'jpg',
     'png',
     'svg'
+] 
+
+const videotypes = [
+    'mp4',
+    'wav',
+    'wmv',
+    'mov'
+
 ]
 
 const app = express();
@@ -36,6 +46,16 @@ app.use(function(req, res, next) {
 app.use('/files/', express.static('./files/changed/'));
 app.use('/files/', express.static('./files/img/'));
 app.use('/assets/', express.static('assets/'));
+app.use('/videos/', express.static('./files/videos/'));
+
+
+let mergedVideo = fluentmpeg();
+let videoNames = [];
+
+videoNames.forEach(function(videoName){
+    mergedVideo = mergedVideo.addInput(videoName);
+});
+
 
 
 app.get('/home', function (req: express.Request, res: express.Response) {
@@ -65,7 +85,29 @@ app.post('/api/file', upload.single('file'), function (req, res) {
 
 });
 
+app.post('/api/videos', upload.array('videos'), function (req, res) {
+    for (let i = 0; i<req.files.length; i++) {
+        if(videotypes.includes(req.files[i].originalname.split('.').pop())){
+        videoNames.push(req.files[i].originalname);
+        mergedVideo.mergeToFile('./videos/'  + req.body.videoname + '.mp4')
+        .on('error', function(err) {
+            console.log('Error ' + err.message);
+        })
+        .on('end', function() {
+            console.log('Finished!');
+        });
+        res.sendStatus(200);
+        }else{
+            return res.status(500)
+        }
+    }
+});
 
+app.get('/play_video/',function(req, res){
+    if(req.originalUrl.includes('/videos/')){
+        res.render('./views/play_video.ejs');
+    }
+});
 
 app.get('/gallery/image' ,function(req,res){
     res.render('gallery_images',{images: fs.readdirSync('./files/img/'),data: fs.readdirSync('./files/changed/')});
@@ -100,4 +142,7 @@ function resizeImage(file: string){
         });
     
 }
+
+
+
 

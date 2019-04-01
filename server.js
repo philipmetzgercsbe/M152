@@ -4,10 +4,17 @@ var express = require("express");
 var gm = require("gm");
 var multer = require("multer");
 var fs = require("fs");
+var fluentmpeg = require("fluent-ffmpeg");
 var filetypes = [
     'jpg',
     'png',
     'svg'
+];
+var videotypes = [
+    'mp4',
+    'wav',
+    'wmv',
+    'mov'
 ];
 var app = express();
 var storage = multer.diskStorage({
@@ -30,6 +37,12 @@ app.use(function (req, res, next) {
 app.use('/files/', express.static('./files/changed/'));
 app.use('/files/', express.static('./files/img/'));
 app.use('/assets/', express.static('assets/'));
+app.use('/videos/', express.static('./files/videos/'));
+var mergedVideo = fluentmpeg();
+var videoNames = [];
+videoNames.forEach(function (videoName) {
+    mergedVideo = mergedVideo.addInput(videoName);
+});
 app.get('/home', function (req, res) {
     res.sendFile(__dirname + "/index.html");
 });
@@ -51,6 +64,29 @@ app.post('/api/file', upload.single('file'), function (req, res) {
     }
     else {
         return res.status(500);
+    }
+});
+app.post('/api/videos', upload.array('videos'), function (req, res) {
+    for (var i = 0; i < req.files.length; i++) {
+        if (videotypes.includes(req.files[i].originalname.split('.').pop())) {
+            videoNames.push(req.files[i].originalname);
+            mergedVideo.mergeToFile('./videos/' + req.body.videoname + '.mp4')
+                .on('error', function (err) {
+                console.log('Error ' + err.message);
+            })
+                .on('end', function () {
+                console.log('Finished!');
+            });
+            res.sendStatus(200);
+        }
+        else {
+            return res.status(500);
+        }
+    }
+});
+app.get('/play_video/', function (req, res) {
+    if (req.originalUrl.includes('/videos/')) {
+        res.render('./views/play_video.ejs');
     }
 });
 app.get('/gallery/image', function (req, res) {
