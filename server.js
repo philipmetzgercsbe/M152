@@ -23,7 +23,14 @@ var storage = multer.diskStorage({
         cb(null, file.originalname);
     }
 });
-var upload = multer({ storage: storage });
+var storage1 = multer.diskStorage({
+    destination: './files/videos/unchanged/',
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+var imageupload = multer({ storage: storage });
+var videoupload = multer({ storage: storage1 });
 app.listen(process.env.PORT || 80, function () {
     console.log("Server listens on port" + 80);
 });
@@ -40,13 +47,10 @@ app.use('/assets/', express.static('assets/'));
 app.use('/videos/', express.static('./files/videos/'));
 var mergedVideo = fluentmpeg();
 var videoNames = [];
-videoNames.forEach(function (videoName) {
-    mergedVideo = mergedVideo.addInput(videoName);
-});
 app.get('/home', function (req, res) {
     res.sendFile(__dirname + "/index.html");
 });
-app.post('/api/files', upload.array('files'), function (req, res) {
+app.post('/api/files', imageupload.array('files'), function (req, res) {
     for (var i = 0; i < req.files.length; i++) {
         if (filetypes.includes(req.files[i].originalname.split('.').pop())) {
             resizeImage(req.files[i].originalname);
@@ -57,7 +61,7 @@ app.post('/api/files', upload.array('files'), function (req, res) {
         }
     }
 });
-app.post('/api/file', upload.single('file'), function (req, res) {
+app.post('/api/file', imageupload.single('file'), function (req, res) {
     if (filetypes.includes('./files/img' + req.file.filename.split('.').pop())) {
         resizeImage(req.file.originalname);
         res.sendStatus(200);
@@ -66,11 +70,15 @@ app.post('/api/file', upload.single('file'), function (req, res) {
         return res.status(500);
     }
 });
-app.post('/api/videos', upload.array('videos'), function (req, res) {
+app.post('/api/videos', videoupload.array('videos'), function (req, res) {
+    mergedVideo.setFfprobePath('C:/Users/vmadmin/Desktop/ffmpeg/ffmpeg/bin/ffprobe.exe');
     for (var i = 0; i < req.files.length; i++) {
         if (videotypes.includes(req.files[i].originalname.split('.').pop())) {
             videoNames.push(req.files[i].originalname);
-            mergedVideo.mergeToFile('./videos/' + req.body.videoname + '.mp4')
+            videoNames.forEach(function (videoName) {
+                mergedVideo = mergedVideo.addInput(videoName);
+            });
+            mergedVideo.mergeToFile('./files/videos/changed/' + req.body.videoname + '.mp4')
                 .on('error', function (err) {
                 console.log('Error ' + err.message);
             })
@@ -80,13 +88,13 @@ app.post('/api/videos', upload.array('videos'), function (req, res) {
             res.sendStatus(200);
         }
         else {
-            return res.status(500);
+            return res.sendStatus(500);
         }
     }
 });
 app.get('/play_video/', function (req, res) {
     if (req.originalUrl.includes('/videos/')) {
-        res.render('./views/play_video.ejs');
+        res.render('./views/play_video.ejs', { video: fs.readdirSync('./files/videos/changed/') });
     }
 });
 app.get('/gallery/image', function (req, res) {
