@@ -90,9 +90,8 @@ app.post('/api/videos', videoupload.array('videos'), function (req, res) {
     })
         .on('end', function () {
         console.log('Finished!');
+        res.redirect('/play_video?videoName=' + actualName);
     });
-    console.log('reached Status');
-    res.sendStatus(200);
 });
 app.get('/play_video/', function (req, res) {
     if (fs.readdirSync('./files/videos/changed/').includes(req.query.videoName)) {
