@@ -1,0 +1,7 @@
+<a href="/home">Go Home</a>
+<h1>Upload multiple videos</h1>
+<form action="/api/audio" method="post" enctype="multipart/form-data">
+  <input type="file" name="audio" accept=".mp3,.mov,.ogg"  />
+  <input type="file" name="vtt" accept=".txt"  />
+  <button type="submit">Send</button>
+</form>

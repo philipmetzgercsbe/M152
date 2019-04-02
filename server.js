@@ -90,6 +90,7 @@ app.post('/api/videos', videoupload.array('videos'), function (req, res) {
     })
         .on('end', function () {
         console.log('Finished!');
+        res.status(200);
         res.redirect('/play_video?videoName=' + actualName);
     });
 });
