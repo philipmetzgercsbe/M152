@@ -1,22 +1,90 @@
-<% if(video == null ){%>
 <a href="/home">Go Home</a>
+<% if(video == null ){%>
 <p>No such video</p>
 <% }else{%>
-<video src="<% video %>" >
-Your browser does not support the video tag.
-</video>
-<ul id="video-controls" class="controls">
-   <li><button id="playpause" type="button">Play/Pause</button></li>
-   <li><button id="stop" type="button">Stop</button></li>
-   <li class="progress">
-      <progress id="progress" value="0" min="0">
-         <span id="progress-bar"></span>
-      </progress>
-   </li>
-   <li><button id="mute" type="button">Mute/Unmute</button></li>
-   <li><button id="volinc" type="button">Vol+</button></li>
-   <li><button id="voldec" type="button">Vol-</button></li>
-   <li><button id="fs" type="button">Fullscreen</button></li>
-</ul>
-<script href="../assets/player.js"></script>
+<head>
+ <title>Videoplayer</title>
+</head>
+<body>
+<div id="video-container">
+  <!-- Video -->
+  <video id="video" width="640" height="365">
+    <source src="/videos/<%=video %>">
+    <p>
+      Your browser doesn't support HTML5 video.
+    </p>
+  </video>
+  <!-- Video Controls -->
+  <div id="video-controls">
+    <button type="button" id="play-pause" onclick='play()'>Play</button>
+    <button type="button" id="button-2" onclick="increaseSpeed(2)">2Speed</button>
+    <button type="button" id="mute" onclick="mute()">Mute</button>
+    <button type="button" id="button-1.5" onclick="increaseSpeed(1.5)">1.5 Speed</button>
+    <button type="button" id="full-screen" onclick="fullscreen()">Full-Screen</button>
+  </div>
+</div>
+</body>
+<script>
+
+
+    // Video
+    var video = document.getElementById("video");
+  
+    // Buttons
+    var playButton = document.getElementById("play-pause");
+    var muteButton = document.getElementById("mute");
+    var speed1Button = document.getElementById("button-1.5");
+    var speed2Button = document.getElementById("button-2");
+    var fullScreenButton = document.getElementById("full-screen");
+  
+    // Sliders
+    var seekBar = document.getElementById("seek-bar");
+    
+  function increaseSpeed(speed){
+      video.playbackspeed = speed;
+  }
+function mute(){
+    if (video.muted == false) {
+      // Mute the video
+      video.muted = true;
+  
+      // Update the button text
+      muteButton.innerHTML = "Unmute";
+    } else {
+      // Unmute the video
+      video.muted = false;
+  
+      // Update the button text
+      muteButton.innerHTML = "Mute";
+    }};
+function fullscreen(){
+        if (video.requestFullscreen) {
+            video.requestFullscreen();
+          } else if (video.mozRequestFullScreen) {
+            video.mozRequestFullScreen(); // Firefox
+          } else if (video.webkitRequestFullscreen) {
+            video.webkitRequestFullscreen(); // Chrome and Safari
+          }
+
+        };
+        function play(){
+    if (video.paused == true) {
+       if(video.playbackrate === 2){
+          video.defaultplaybackrate = 1;
+       }
+      // Play the video
+      video.play();
+  
+      // Update the button text to 'Pause'
+      playButton.innerHTML = "Pause";
+    } else {
+      // Pause the video
+      video.pause();
+  
+      // Update the button text to 'Play'
+      playButton.innerHTML = "Play";
+    }
+  };
+    
+    </script>
 <%}%>

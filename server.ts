@@ -54,7 +54,7 @@ app.use(function(req, res, next) {
 app.use('/files/', express.static('./files/changed/'));
 app.use('/files/', express.static('./files/img/'));
 app.use('/assets/', express.static('assets/'));
-app.use('/videos/', express.static('./files/videos/'));
+app.use('/videos/', express.static('./files/videos/changed/'));
 
 
 let mergedVideo = fluentmpeg();
@@ -92,27 +92,29 @@ app.post('/api/videos', videoupload.array('videos'), function (req, res) {
     mergedVideo.setFfprobePath('C:/Users/vmadmin/Desktop/ffmpeg/ffmpeg/bin/ffprobe.exe')
     for (let i = 0; i<req.files.length; i++) {
         if(videotypes.includes(req.files[i].originalname.split('.').pop())){
-        videoNames.push(req.files[i].originalname);
-        res.sendStatus(200);
-        }else{
-            return res.sendStatus(500)
+        videoNames.push('./files/videos/unchanged/'+req.files[i].originalname);
         }
     }
     videoNames.forEach(function(videoName){
         mergedVideo = mergedVideo.addInput(videoName);
     });
-    mergedVideo.mergeToFile('./files/videos/changed/'  + req.body.videoname + '.mp4', )
+    console.log(videoNames);
+    let actualName = req.body.videoname + '.mp4'
+    mergedVideo.format("mp4");
+    mergedVideo.mergeToFile('./files/videos/changed/' + actualName)
     .on('error', function(err) {
         console.log('Error ' + err.message);
     })
     .on('end', function() {
         console.log('Finished!');
     });
+    console.log('reached Status')
+    res.sendStatus(200);
 });
 
 app.get('/play_video/',function(req, res){
-    if(req.originalUrl.includes('/videos/')){
-        res.render('play_video.ejs',{video: fs.readdirSync('./files/videos/changed/')});
+    if(fs.readdirSync('./files/videos/changed/').includes(req.query.videoName)){
+        res.render('play_video',{video: req.query.videoName})
     }
 });
 
