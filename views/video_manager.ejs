@@ -1,0 +1,8 @@
+<a href="/home">Go Home</a>
+<a href="/video_player">Play a Video</a>
+<h1>Upload multiple videos</h1>
+<form action="/api/videos" method="post" enctype="multipart/form-data">
+  <input type="text" name="videoname" placeholder="JqueryMovie">
+  <input type="file" name="videos" accept=".mp4,.wav,.wmv,.mov,.flv" multiple />
+  <button type="submit">Send</button>
+</form>

@@ -95,8 +95,11 @@ app.post('/api/videos', videoupload.array('videos'), function (req, res) {
 });
 app.get('/play_video/', function (req, res) {
     if (req.originalUrl.includes('/videos/')) {
-        res.render('./views/play_video.ejs', { video: fs.readdirSync('./files/videos/changed/') });
+        res.render('play_video.ejs', { video: fs.readdirSync('./files/videos/changed/') });
     }
+});
+app.get('/video_manager', function (req, res) {
+    res.render('video_manager');
 });
 app.get('/gallery/image', function (req, res) {
     res.render('gallery_images', { images: fs.readdirSync('./files/img/'), data: fs.readdirSync('./files/changed/') });
