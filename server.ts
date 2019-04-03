@@ -7,6 +7,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as fluentmpeg from "fluent-ffmpeg";
 import * as fluent from "ffmpeg";
+import * as ws from "websockets";
 
 const filetypes = [
     'jpg',
@@ -69,8 +70,7 @@ app.use('/files/', express.static('./files/img/'));
 app.use('/assets/', express.static('assets/'));
 app.use('/videos/', express.static('./files/videos/changed/'));
 app.use('/audio/',express.static('./files/audio/'));
-
-
+ws.use((app));
 let mergedVideo = fluentmpeg();
 let videoNames = [];
 
@@ -103,7 +103,7 @@ app.post('/api/file', imageupload.single('file'), function (req, res) {
 });
 
 app.post('/api/videos',videoupload.array('videos'), function (req, res) {
-    mergedVideo.setFfprobePath('C:/Users/vmadmin/Desktop/ffmpeg/ffmpeg/bin/ffprobe.exe')
+    mergedVideo.setFfprobePath('C:/Users/vmadmin/Desktop/ffmpeg/ffmpeg/bin/ffprobe.exe') //Shouldn't be local
     for (let i = 0; i<req.files.length; i++) {
         if(videotypes.includes(req.files[i].originalname.split('.').pop())){
         videoNames.push('./files/videos/unchanged/'+req.files[i].originalname);
@@ -129,10 +129,19 @@ app.post('/api/videos',videoupload.array('videos'), function (req, res) {
 
 app.post('/api/audio', audioupload.array('audio'), function (req, res) {
      if(audiotypes.includes(req.files[0].originalname.split('.').pop())){
-     let audiofile = req.files[0];
-     fs.rename(audiofile,'/audio/audio/' + audiofile.originalname  + '.mp3',null);
+     let audiofile = req.files[0].originalname; //Writing to wrong Directory /vtt instead /audio and /vtt
+     
+     fs.rename(audiofile,'/audio/audio/' + audiofile + '.mp3',function(error){
+         if(error){
+            console.log('Renaming failed');
+         }
+     });
      let vttFile = req.files[1];
-     fs.rename(vttFile,'/audio/vtt/'+ audiofile.originalname + '.vtt',null);
+     fs.rename(vttFile.originalname,'/audio/vtt/'+ audiofile+ '.vtt', function(error){
+         if(!error){
+            console.log('rename succesful')
+         }
+     });
      res.redirect('/play_audio?audioName=' + audiofile.originalname + '.mp3');
      }else{
          res.sendStatus(500);
