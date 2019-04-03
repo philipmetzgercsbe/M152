@@ -17,6 +17,11 @@ var videotypes = [
     'mov',
     'flv'
 ];
+var audiotypes = [
+    'mp3',
+    'wav',
+    'ogg',
+];
 var app = express();
 var storage = multer.diskStorage({
     destination: './files/img',
@@ -104,12 +109,7 @@ app.post('/api/videos', videoupload.array('videos'), function (req, res) {
     setTimeout(mergedVideo.mergeToFile, 50000, 'fun');
 });
 app.post('/api/audio', audioupload.array('audio'), function (req, res) {
-    if (filetypes.includes('./files/img' + req.file.filename.split('.').pop())) {
-        res.sendStatus(200);
-    }
-    else {
-        return res.sendStatus(500);
-    }
+    req.files[0];
 });
 app.get('/play_video/', function (req, res) {
     if (fs.readdirSync('./files/videos/changed/').includes(req.query.videoName)) {

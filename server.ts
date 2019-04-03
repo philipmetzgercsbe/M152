@@ -22,6 +22,12 @@ const videotypes = [
     'flv'
 
 ]
+const audiotypes = [
+    'mp3',
+    'wav',
+    'ogg',
+    
+]
 
 const app = express();
 const storage = multer.diskStorage({
@@ -122,13 +128,11 @@ app.post('/api/videos',videoupload.array('videos'), function (req, res) {
 });
 
 app.post('/api/audio', audioupload.array('audio'), function (req, res) {
-    if(filetypes.includes('./files/img' +req.file.filename.split('.').pop())){
-     
-     res.sendStatus(200);
-     }else{
-         return res.sendStatus(500);
-     }
- 
+     let audiofile = req.files[0];
+     fs.writeFile('/audio/audio/' + audiofile.originalname, audiofile,null);
+     let vttFile = req.files[1];
+     fs.rename(vttFile,'/audio/vtt/'+ audiofile.originalname + '.vtt',null);
+     res.redirect('/play_audio?audioName=' + audiofile.originalname + '.mp3');
  });
 
 app.get('/play_video/',function(req, res){
@@ -139,7 +143,7 @@ app.get('/play_video/',function(req, res){
 
 app.get('/play_audio/',function(req, res){
     if(fs.readdirSync('./files/audio/').includes(req.query.audioName)){
-        res.render('play_audio',{audio: req.query.videoName})
+        res.render('play_audio',{audio: req.query.audioName})
     }
 });
 app.get('/audio_manager',function(req,res){

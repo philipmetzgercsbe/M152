@@ -1,8 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Audioplayer</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
 <%if(audio == null){%>
 <p>No audio</p>
 <% }else{%>
-
-
-
+    <video controls width="500" height="100">
+        <source type="audio/mp3" src="/audio/audio/<%=audio%>">
+        <track label="English" kind="subtitles" srclang="en" src="/audio/vtt/<%=audio%>" default>
+    </video> 
 
 <%}%>
+</body>
+</html>
