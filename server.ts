@@ -128,11 +128,15 @@ app.post('/api/videos',videoupload.array('videos'), function (req, res) {
 });
 
 app.post('/api/audio', audioupload.array('audio'), function (req, res) {
+     if(audiotypes.includes(req.files[0].originalname.split('.').pop())){
      let audiofile = req.files[0];
-     fs.writeFile('/audio/audio/' + audiofile.originalname, audiofile,null);
+     fs.rename(audiofile,'/audio/audio/' + audiofile.originalname  + '.mp3',null);
      let vttFile = req.files[1];
      fs.rename(vttFile,'/audio/vtt/'+ audiofile.originalname + '.vtt',null);
      res.redirect('/play_audio?audioName=' + audiofile.originalname + '.mp3');
+     }else{
+         res.sendStatus(500);
+     }
  });
 
 app.get('/play_video/',function(req, res){
@@ -142,7 +146,7 @@ app.get('/play_video/',function(req, res){
 });
 
 app.get('/play_audio/',function(req, res){
-    if(fs.readdirSync('./files/audio/').includes(req.query.audioName)){
+    if(fs.readdirSync('./files/audio/audio/').includes(req.query.audioName)){
         res.render('play_audio',{audio: req.query.audioName})
     }
 });
