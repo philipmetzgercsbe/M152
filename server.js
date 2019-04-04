@@ -17,12 +17,10 @@ var videotypes = [
     'mov',
     'flv'
 ];
-var audiotypes = [
-    'mp3',
-    'wav',
-    'ogg',
-];
 var app = express();
+//const httpserver = http.createServer(app);
+//const httpsserver = https.createServer(app);
+//const wss = new WebSocket.Server((httpserver));
 var storage = multer.diskStorage({
     destination: './files/img',
     filename: function (req, file, cb) {
@@ -85,7 +83,7 @@ app.post('/api/file', imageupload.single('file'), function (req, res) {
     }
 });
 app.post('/api/videos', videoupload.array('videos'), function (req, res) {
-    mergedVideo.setFfprobePath('C:/Users/vmadmin/Desktop/ffmpeg/ffmpeg/bin/ffprobe.exe');
+    mergedVideo.setFfprobePath('C:/Users/vmadmin/Desktop/ffmpeg/ffmpeg/bin/ffprobe.exe'); //Shouldn't be local
     for (var i = 0; i < req.files.length; i++) {
         if (videotypes.includes(req.files[i].originalname.split('.').pop())) {
             videoNames.push('./files/videos/unchanged/' + req.files[i].originalname);
@@ -109,16 +107,29 @@ app.post('/api/videos', videoupload.array('videos'), function (req, res) {
     setTimeout(mergedVideo.mergeToFile, 50000, 'fun');
 });
 app.post('/api/audio', audioupload.array('audio'), function (req, res) {
-    req.files[0];
+    var audiofile = req.files[0]; //Writing to wrong Directory /vtt instead /audio and /vtt
+    var vttFile = req.files[1];
+    fs.rename('./files/audio/' + audiofile.originalname, './files/audio/mp3/' + audiofile.originalname, function (error) {
+        if (error) {
+            console.log(error);
+        }
+    });
+    fs.rename('./files/audio/' + vttFile.originalname, './files/audio/vtt/' + audiofile.originalname.split('.').slice(0, -1) + '.vtt', function (error) {
+        if (error) {
+            console.log(error);
+        }
+    });
+    res.redirect('/play_audio?audioName=' + audiofile.originalname);
 });
 app.get('/play_video/', function (req, res) {
     if (fs.readdirSync('./files/videos/changed/').includes(req.query.videoName)) {
         res.render('play_video', { video: req.query.videoName });
     }
 });
-app.get('/play_audio/', function (req, res) {
-    if (fs.readdirSync('./files/audio/').includes(req.query.audioName)) {
-        res.render('play_audio', { audio: req.query.videoName });
+app.get('/play_audio', function (req, res) {
+    if (fs.readdirSync('./files/audio/mp3/').includes(req.query.audioName)) {
+        var actualSub = req.query.audioName.split('.').slice(0, -1) + '.vtt';
+        res.render('play_audio', { audio: req.query.audioName, subtitle: actualSub });
     }
 });
 app.get('/audio_manager', function (req, res) {

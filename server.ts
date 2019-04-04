@@ -7,7 +7,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as fluentmpeg from "fluent-ffmpeg";
 import * as fluent from "ffmpeg";
-import * as ws from "websockets";
+import * as ws from "ws";
+import * as http from "http";
+import * as https  from "https";
 
 const filetypes = [
     'jpg',
@@ -23,14 +25,12 @@ const videotypes = [
     'flv'
 
 ]
-const audiotypes = [
-    'mp3',
-    'wav',
-    'ogg',
-    
-]
+
 
 const app = express();
+//const httpserver = http.createServer(app);
+//const httpsserver = https.createServer(app);
+//const wss = new WebSocket.Server((httpserver));
 const storage = multer.diskStorage({
     destination: './files/img',
     filename: function (req,file,cb){
@@ -70,7 +70,7 @@ app.use('/files/', express.static('./files/img/'));
 app.use('/assets/', express.static('assets/'));
 app.use('/videos/', express.static('./files/videos/changed/'));
 app.use('/audio/',express.static('./files/audio/'));
-ws.use((app));
+
 let mergedVideo = fluentmpeg();
 let videoNames = [];
 
@@ -128,24 +128,20 @@ app.post('/api/videos',videoupload.array('videos'), function (req, res) {
 });
 
 app.post('/api/audio', audioupload.array('audio'), function (req, res) {
-     if(audiotypes.includes(req.files[0].originalname.split('.').pop())){
-     let audiofile = req.files[0].originalname; //Writing to wrong Directory /vtt instead /audio and /vtt
-     
-     fs.rename(audiofile,'/audio/audio/' + audiofile + '.mp3',function(error){
-         if(error){
-            console.log('Renaming failed');
-         }
-     });
+     let audiofile = req.files[0]; //Writing to wrong Directory /vtt instead /audio and /vtt
      let vttFile = req.files[1];
-     fs.rename(vttFile.originalname,'/audio/vtt/'+ audiofile+ '.vtt', function(error){
-         if(!error){
-            console.log('rename succesful')
+
+     fs.rename('./files/audio/' + audiofile.originalname, './files/audio/mp3/'  + audiofile.originalname , function(error){
+        if(error){
+            console.log(error);
+        }
+    });
+    fs.rename('./files/audio/' + vttFile.originalname, './files/audio/vtt/'  + audiofile.originalname.split('.').slice(0,-1) + '.vtt', function(error){
+         if(error){
+             console.log(error);
          }
-     });
-     res.redirect('/play_audio?audioName=' + audiofile.originalname + '.mp3');
-     }else{
-         res.sendStatus(500);
-     }
+     })
+     res.redirect('/play_audio?audioName=' + audiofile.originalname);
  });
 
 app.get('/play_video/',function(req, res){
@@ -154,9 +150,10 @@ app.get('/play_video/',function(req, res){
     }
 });
 
-app.get('/play_audio/',function(req, res){
-    if(fs.readdirSync('./files/audio/audio/').includes(req.query.audioName)){
-        res.render('play_audio',{audio: req.query.audioName})
+app.get('/play_audio',function(req, res){
+    if(fs.readdirSync('./files/audio/mp3/').includes(req.query.audioName)){
+        let actualSub = req.query.audioName.split('.').slice(0,-1) + '.vtt';
+        res.render('play_audio',{audio: req.query.audioName, subtitle: actualSub})
     }
 });
 app.get('/audio_manager',function(req,res){

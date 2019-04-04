@@ -10,9 +10,10 @@
 <%if(audio == null){%>
 <p>No audio</p>
 <% }else{%>
+    <br>
     <video controls width="500" height="100">
-        <source type="audio/mp3" src="/audio/audio/<%=audio%>">
-        <track label="English" kind="subtitles" srclang="en" src="/audio/vtt/<%=audio%>" default>
+        <source type="audio/mp3" src="/audio/mp3/<%=audio%>">
+        <track label="English" kind="subtitles" srclang="en" src="/audio/vtt/<%=subtitle%>" default>
     </video> 
 
 <%}%>
