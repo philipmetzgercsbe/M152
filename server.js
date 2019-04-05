@@ -65,11 +65,12 @@ app.get('/home', function (req, res) {
     res.sendFile(__dirname + "/index.html");
 });
 wss.on('connection', function (ws) {
+    //Finish this => Client validation
     wss.clients
         .forEach(function (client) {
         client.send(JSON.stringify({
             user: "WebyWebo",
-            text: 'New user joined the Chat!',
+            text: 'New user joined the WebyWebo Chat!',
             date: new Date().toLocaleTimeString()
         }));
     });

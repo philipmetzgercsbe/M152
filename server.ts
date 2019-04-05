@@ -83,11 +83,12 @@ app.get('/home', function (req: express.Request, res: express.Response) {
 });
 
 wss.on('connection', (ws) => {
+    //Finish this => Client validation
     wss.clients
         .forEach(client => {
             client.send(JSON.stringify({
                 user: "WebyWebo",
-                text: 'New user joined the Chat!',
+                text: 'New user joined the WebyWebo Chat!',
                 date: new Date().toLocaleTimeString()
             }))
         });
