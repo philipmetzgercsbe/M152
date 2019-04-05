@@ -29,7 +29,7 @@ const videotypes = [
 
 const app = express();
 const httpserver = http.createServer(app);
-const wss = new ws.Server({httpserver});
+const wss = new ws.Server({server: httpserver, port: 16255});
 const storage = multer.diskStorage({
     destination: './files/img',
     filename: function (req,file,cb){
@@ -51,6 +51,8 @@ const storage2 = multer.diskStorage({
 const imageupload = multer({storage: storage})
 const videoupload = multer({storage: storage1})
 const audioupload = multer({storage: storage2})
+
+
 app.listen(process.env.PORT || 80,function (){
     console.log("Server listens on port"+80);
 });
@@ -76,6 +78,20 @@ let videoNames = [];
 
 app.get('/home', function (req: express.Request, res: express.Response) {
     res.sendFile(__dirname + "/index.html");
+});
+
+wss.on('connection', (ws) => {
+
+    //connection is up, let's add a simple simple event
+    ws.on('message', (message: string) => {
+
+        //log the received message and send it back to the client
+        console.log('received: %s', message);
+        ws.send(`Hello, you sent -> ${message}`);
+    });
+
+    //send immediatly a feedback to the incoming connection    
+    ws.send('Hi there, I am a WebSocket server');
 });
 
 app.post('/api/files', imageupload.array('files'), function (req, res) {

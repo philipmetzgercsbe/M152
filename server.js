@@ -21,7 +21,7 @@ var videotypes = [
 ];
 var app = express();
 var httpserver = http.createServer(app);
-var wss = new ws.Server({ httpserver: httpserver });
+var wss = new ws.Server({ server: httpserver, port: 16255 });
 var storage = multer.diskStorage({
     destination: './files/img',
     filename: function (req, file, cb) {
@@ -62,6 +62,16 @@ var mergedVideo = fluentmpeg();
 var videoNames = [];
 app.get('/home', function (req, res) {
     res.sendFile(__dirname + "/index.html");
+});
+wss.on('connection', function (ws) {
+    //connection is up, let's add a simple simple event
+    ws.on('message', function (message) {
+        //log the received message and send it back to the client
+        console.log('received: %s', message);
+        ws.send("Hello, you sent -> " + message);
+    });
+    //send immediatly a feedback to the incoming connection    
+    ws.send('Hi there, I am a WebSocket server');
 });
 app.post('/api/files', imageupload.array('files'), function (req, res) {
     for (var i = 0; i < req.files.length; i++) {
