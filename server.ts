@@ -10,6 +10,7 @@ import * as fluent from "ffmpeg";
 import * as ws from "ws";
 import * as http from "http";
 import * as https  from "https";
+import serveStatic = require("serve-static");
 
 const filetypes = [
     'jpg',
