@@ -28,9 +28,8 @@ const videotypes = [
 
 
 const app = express();
-//const httpserver = http.createServer(app);
-//const httpsserver = https.createServer(app);
-//const wss = new WebSocket.Server((httpserver));
+const httpserver = http.createServer(app);
+const wss = new ws.Server({httpserver});
 const storage = multer.diskStorage({
     destination: './files/img',
     filename: function (req,file,cb){
@@ -168,6 +167,10 @@ app.get('/video_manager',function(req,res){
 
 app.get('/gallery/image' ,function(req,res){
     res.render('gallery_images',{images: fs.readdirSync('./files/img/'),data: fs.readdirSync('./files/changed/')});
+});
+
+app.get('/webchat', function(req, res){
+    res.render('webchat');
 });
 
 app.get('*', function (req, res) {

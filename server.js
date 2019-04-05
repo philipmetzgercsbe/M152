@@ -5,6 +5,8 @@ var gm = require("gm");
 var multer = require("multer");
 var fs = require("fs");
 var fluentmpeg = require("fluent-ffmpeg");
+var ws = require("ws");
+var http = require("http");
 var filetypes = [
     'jpg',
     'png',
@@ -18,9 +20,8 @@ var videotypes = [
     'flv'
 ];
 var app = express();
-//const httpserver = http.createServer(app);
-//const httpsserver = https.createServer(app);
-//const wss = new WebSocket.Server((httpserver));
+var httpserver = http.createServer(app);
+var wss = new ws.Server({ httpserver: httpserver });
 var storage = multer.diskStorage({
     destination: './files/img',
     filename: function (req, file, cb) {
@@ -140,6 +141,9 @@ app.get('/video_manager', function (req, res) {
 });
 app.get('/gallery/image', function (req, res) {
     res.render('gallery_images', { images: fs.readdirSync('./files/img/'), data: fs.readdirSync('./files/changed/') });
+});
+app.get('/webchat', function (req, res) {
+    res.render('webchat');
 });
 app.get('*', function (req, res) {
     res.redirect('/home');
