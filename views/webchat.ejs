@@ -5,25 +5,53 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="css/style.css" rel="stylesheet">
-
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css">
- 
-    <!-- Include Editor style. -->
-    <link href="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
-    <link href="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_style.min.css" rel="stylesheet" type="text/css" />
-  </head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css"> 
+        <!-- Include Editor style. -->
+        <link href="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+        <link href="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_style.min.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
-    <form action="" method="noreload()">
-        <a href="/home">Go Home</a> 
+    <a href="/home">Go Home</a><br>
+    <form onsubmit="return false" method="sendData()" >
         <div class="messageBox">
         <input type="text" name="username" placeholder="Daniel Schmitz"><br>
-        <textarea placeholder="Yo your Message here "></textarea><br>
-        <button type="submit">Send Message</button>
+        <textarea name="message" placeholder="Yo your Message here "></textarea><br>
+        <button id="submit">Send Message</button>
     </div>
     </form>
+    <div class ="received-messages">
+        
+    </div>
     </body>
+
+    <script>
+    let exampleSocket = new WebSocket("ws:localhost");
+    document.querySelector("#submit").addEventListener('click', () => {
+        let userName = document.getElementByName('username').value;
+        let myMessage = document.getElementByName('message').value;
+        if (userName === ''){
+            alert('User Name is Required')
+        } else if (myMessage === ''){
+            alert('A Message Required')
+        }
+        else {
+            let myData = {
+                user: document.getElementByName('username').value,
+                text: document.getElementByName('message').value, // div.innerText,
+                date: new Date().toLocaleTimeString()
+            };
+            exampleSocket.send(JSON.stringify(myData));
+            $('#message').froalaEditor('html.set', '');
+            console.log('submit clicked');
+        }
+    });
+    exampleSocket.onmessage = event => {
+        let form = JSON.parse(event.data)
+        document.querySelector(".received-messages").innerHTML = `${document.querySelector(".received-messages").innerHTML} <hr class="col-10"><h5><b>${form.user}: </b></h5><p>${form.text}</p><h6>${form.date}</h6>`;
+    }
+    </script>
+
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>

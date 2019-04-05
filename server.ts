@@ -10,7 +10,7 @@ import * as fluent from "ffmpeg";
 import * as ws from "ws";
 import * as http from "http";
 import * as https  from "https";
-import serveStatic = require("serve-static");
+
 
 const filetypes = [
     'jpg',
@@ -29,8 +29,9 @@ const videotypes = [
 
 
 const app = express();
-const httpserver = http.createServer(app);
-const wss = new ws.Server({server: httpserver, port: 16255});
+const server = http.createServer(app);
+const wssport = process.env.PORT || 80;
+const wss = new ws.Server({server: server});
 const storage = multer.diskStorage({
     destination: './files/img',
     filename: function (req,file,cb){
@@ -53,9 +54,8 @@ const imageupload = multer({storage: storage})
 const videoupload = multer({storage: storage1})
 const audioupload = multer({storage: storage2})
 
-
-app.listen(process.env.PORT || 80,function (){
-    console.log("Server listens on port"+80);
+server.listen(wssport,function (){
+    console.log("Server listens on port"+wssport);
 });
 
 app.set('view engine', 'ejs');
@@ -69,7 +69,7 @@ app.use(function(req, res, next) {
 
 app.use('/files/', express.static('./files/changed/'));
 app.use('/files/', express.static('./files/img/'));
-app.use('/assets/', express.static('assets/'));
+app.use('/assets/', express.static('./assets/'));
 app.use('/videos/', express.static('./files/videos/changed/'));
 app.use('/audio/',express.static('./files/audio/'));
 
@@ -77,23 +77,54 @@ let mergedVideo = fluentmpeg();
 let videoNames = [];
 
 
+
 app.get('/home', function (req: express.Request, res: express.Response) {
     res.sendFile(__dirname + "/index.html");
 });
 
 wss.on('connection', (ws) => {
-
+    wss.clients
+        .forEach(client => {
+            client.send(JSON.stringify({
+                user: "WebyWebo",
+                text: 'New user joined the Chat!',
+                date: new Date().toLocaleTimeString()
+            }))
+        });
     //connection is up, let's add a simple simple event
-    ws.on('message', (message: string) => {
-
+    ws.on('message', (data: string) => {
         //log the received message and send it back to the client
-        console.log('received: %s', message);
-        ws.send(`Hello, you sent -> ${message}`);
+        wss.clients
+            .forEach(client => {
+                if (client !== ws) {
+                    client.send(`${data}`);
+                } else {
+                    ws.send(`${data}`);
+                }
+            });
     });
-
-    //send immediatly a feedback to the incoming connection    
-    ws.send('Hi there, I am a WebSocket server');
+    ws.send(JSON.stringify({
+        user: "WebyWebo",
+        text: 'Nice to see you again.',
+        date: new Date().toLocaleTimeString()
+    }));
+    setInterval(() => {
+        wss.clients.forEach((client) => {
+            client.send(new Date().toTimeString());
+        });
+    }, 15000);
 });
+
+
+setInterval(() => {
+    wss.clients.forEach((ws: any) => {
+        
+        if (!ws.isAlive) return ws.terminate();
+        
+        ws.isAlive = false;
+        ws.ping(null, false, true);
+    });
+}, 15000);
 
 app.post('/api/files', imageupload.array('files'), function (req, res) {
     for (let i = 0; i<req.files.length; i++) {
