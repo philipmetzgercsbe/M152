@@ -120,7 +120,15 @@ wss.on('connection', (ws) => {
 setInterval(() => {
     wss.clients.forEach((ws: any) => {
         
-        if (!ws.isAlive) return ws.terminate();
+        if (!ws.isAlive){ 
+            ws.send(JSON.stringify({
+                user: ws.client,
+                message: `${ws.client.username}` + "has left the channel",
+                date: new Date().toLocaleTimeString()
+
+            }))
+            return ws.terminate();
+        }
         
         ws.isAlive = false;
         ws.ping(null, false, true);
