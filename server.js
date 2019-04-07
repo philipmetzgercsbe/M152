@@ -103,7 +103,7 @@ setInterval(function () {
         if (!ws.isAlive) {
             ws.send(JSON.stringify({
                 user: ws.client,
-                message: "" + ws.client.username + "has left the channel",
+                message: "" + ws.client + "has left the channel",
                 date: new Date().toLocaleTimeString()
             }));
             return ws.terminate();
